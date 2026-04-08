@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Esboços de Elite - Ministro Classe A</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Playfair+Display:ital,wght@0,400;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root { --blue: #002147; --gold: #d4af37; --paper: #f4f1ea; --ink: #1a1a1a; }
+        body { background: var(--blue); color: var(--paper); font-family: 'Lato', sans-serif; margin: 0; padding: 20px; }
+        
+        .nav-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--gold); padding-bottom: 15px; margin-bottom: 25px; }
+        .btn-back { color: var(--gold); text-decoration: none; font-family: 'Cinzel'; font-size: 0.8rem; }
+        
+        h2 { font-family: 'Cinzel', serif; color: var(--gold); text-align: center; margin: 0; font-size: 1.2rem; }
+
+        .search-container { position: relative; margin: 20px 0; }
+        .search-box {
+            width: 100%; padding: 15px; background: rgba(255,255,255,0.05);
+            border: 1px solid var(--gold); color: var(--paper); border-radius: 4px;
+            box-sizing: border-box; font-size: 1rem; outline: none;
+        }
+
+        .lista-esbocos { display: flex; flex-direction: column; gap: 15px; }
+
+        .esboco-card {
+            background: var(--paper); color: var(--ink); padding: 20px;
+            border-radius: 4px; border-left: 5px solid var(--gold);
+            cursor: pointer; transition: 0.3s;
+        }
+
+        .tema { font-family: 'Cinzel', serif; font-weight: bold; font-size: 0.9rem; display: block; color: var(--blue); margin-bottom: 5px; }
+        .referencia { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.8rem; color: #666; }
+
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--blue); z-index: 1000; overflow-y: auto; padding: 15px; box-sizing: border-box;
+        }
+
+        .pergaminho {
+            background: var(--paper); color: var(--ink); padding: 30px;
+            border-radius: 4px; position: relative; max-width: 800px; margin: auto;
+        }
+
+        .corpo-esboco { font-family: 'Playfair Display', serif; line-height: 1.8; font-size: 1.1rem; text-align: justify; }
+        .corpo-esboco h4 { font-family: 'Cinzel'; color: var(--blue); border-bottom: 2px solid var(--gold); padding-bottom: 10px; margin-top: 0; text-align: center; }
+        .corpo-esboco b { color: var(--blue); }
+        
+        .btn-close { 
+            background: var(--blue); color: var(--paper); border: none; 
+            padding: 12px; font-family: 'Cinzel'; cursor: pointer; 
+            margin-bottom: 20px; border-radius: 4px; width: 100%; font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="nav-header">
+        <a href="index.html" class="btn-back">← Gabinete</a>
+        <span style="font-family: 'Cinzel'; font-size: 0.65rem; color: var(--gold);">Acervo Homilético Avançado</span>
+    </div>
+
+    <h2>Esboços de Elite</h2>
+    
+    <div class="search-container">
+        <input type="text" id="campoBusca" class="search-box" placeholder="Pesquisar tema ou referência..." onkeyup="filtrar()">
+    </div>
+
+    <div class="lista-esbocos" id="lista">
+        <div class="esboco-card" onclick="abrirEsboco('esboco1')">
+            <span class="tema">1. A Eficácia da Oração Ministerial</span>
+            <span class="referencia">Tiago 5:16 | Vida Espiritual</span>
+        </div>
+        <div class="esboco-card" onclick="abrirEsboco('esboco2')">
+            <span class="tema">2. O Caráter do Ministro Aprovado</span>
+            <span class="referencia">2 Timóteo 2:15 | Doutrina</span>
+        </div>
+        <div class="esboco-card" onclick="abrirEsboco('esboco3')">
+            <span class="tema">3. A Soberania no Governo da Igreja</span>
+            <span class="referencia">Salmos 115:3 | Gestão</span>
+        </div>
+        <div class="esboco-card" onclick="abrirEsboco('esboco4')">
+            <span class="tema">4. A Chama Pentecostal: Labaredas de Fogo</span>
+            <span class="referencia">Atos 2:1-4 | Avivamento</span>
+        </div>
+        <div class="esboco-card" onclick="abrirEsboco('esboco5')">
+            <span class="tema">5. O Ministro e o Tempo da Apostasia</span>
+            <span class="referencia">1 Timóteo 4:1 | Escatologia e Defesa</span>
+        </div>
+        <div class="esboco-card" onclick="abrirEsboco('esboco6')">
+            <span class="tema">6. AHAVA: A Dívida Eterna do Amor</span>
+            <span class="referencia">Romanos 13:8 | Exegese Hebraica e Grega</span>
+        </div>
+        <div class="esboco-card" onclick="abrirEsboco('esboco7')">
+            <span class="tema">7. Eternidade: O Plano que o Mundo Ignora</span>
+            <span class="referencia">Lucas 12:20 | Consciência de Eternidade</span>
+        </div>
+    </div>
+
+    <div id="modalEsboco" class="modal">
+        <div class="pergaminho">
+            <button class="btn-close" onclick="fecharEsboco()">FECHAR CONSULTA</button>
+            <div id="conteudo-dinamico" class="corpo-esboco"></div>
+        </div>
+    </div>
+
+    <script>
+        const dadosEsbocos = {
+            esboco1: `
+                <h4>A Eficácia da Oração Ministerial</h4>
+                <p><i>Texto: Tiago 5:16</i></p>
+                <p><b>Introdução:</b> A oração não é um preparo para o trabalho; a oração É o trabalho do Ministro.</p>
+                <p><b>I. A Oração que Move o Trono:</b> Fé e fervor no gabinete.</p>
+                <p><b>II. Blindagem Emocional:</b> Como a oração previne o esgotamento (Burnout).</p>
+                <p><b>III. Intercessão pelo Rebanho:</b> O papel do sacerdote intercessor.</p>
+                <p><b>Conclusão:</b> Menos métodos humanos, mais dependência divina.</p>
+            `,
+            esboco2: `
+                <h4>O Caráter do Ministro Aprovado</h4>
+                <p><i>Texto: 2 Timóteo 2:15</i></p>
+                <p><b>Introdução:</b> A autoridade no púlpito nasce da integridade no secreto.</p>
+                <p><b>I. O Manejo da Verdade:</b> Exegese pura e sem artifícios.</p>
+                <p><b>II. A Vida Irrepreensível:</b> O decoro como escudo do ministério.</p>
+                <p><b>III. Ética e Honra:</b> Devolver a glória a Deus e a honra aos superiores.</p>
+                <p><b>Conclusão:</b> Seja um obreiro que não tem de que se envergonhar.</p>
+            `,
+            esboco3: `
+                <h4>A Soberania no Governo da Igreja</h4>
+                <p><i>Texto: Salmos 115:3</i></p>
+                <p><b>Introdução:</b> Administrar a igreja é reconhecer que o dono do rebanho é o Mestre.</p>
+                <p><b>I. Decisões sob Consulta:</b> Oração antes da assembleia.</p>
+                <p><b>II. Providência e Recursos:</b> Deus sustenta o que Ele ordena.</p>
+                <p><b>III. O Descanso do Líder:</b> Se Deus governa, o Ministro pode dormir em paz.</p>
+            `,
+            esboco4: `
+                <h4>A Chama Pentecostal</h4>
+                <p><b>Referência:</b> Atos 2:1-4</p>
+                <p><b>Introdução:</b> O Pentecostes não foi um evento isolado na história, mas a inauguração da era do governo do Espírito sobre a Igreja. O fogo não serve apenas para iluminar, mas para purificar e impulsionar.</p>
+                <p><b>I. A Unidade como Combustível:</b> "Estavam todos reunidos no mesmo lugar". O fogo não desce onde há divisão. A autoridade ministerial depende da harmonia do corpo.</p>
+                <p><b>II. O Som do Vento e a Visibilidade do Fogo:</b> O Espírito Santo é audível e visível na vida do obreiro. Se não há evidências (fruto e dons), a chama tornou-se apenas brasas de tradição.</p>
+                <p><b>III. A Capacitação para o Improvável:</b> Falar em outras línguas foi o sinal de que o Evangelho romperia barreiras culturais. O fogo nos tira do conformismo do gabinete para a urgência da seara.</p>
+                <p><b>Aplicação:</b> Ministro, sua lamparina está cheia de azeite ou apenas fumaça de glórias passadas?</p>
+            `,
+            esboco5: `
+                <h4>O Ministro e o Tempo da Apostasia</h4>
+                <p><b>Referência:</b> 1 Timóteo 4:1-2</p>
+                <p><b>Introdução:</b> Vivemos o tempo da "comichão nos ouvidos". A apostasia não é a ausência de religiosidade, mas o abandono da Sã Doutrina em troca de entretenimento espiritual.</p>
+                <p><b>I. O Perigo das Doutrinas de Demônios:</b> O inimigo infiltra sofismas que parecem piedade, mas negam o poder do Evangelho. O Ministro deve ser o guardião da ortodoxia bíblica.</p>
+                <p><b>II. A Cauterização da Consciência:</b> Quando o púlpito silencia sobre o pecado para ser "relevante", ele contribui para a cauterização da consciência do rebanho.</p>
+                <p><b>III. A Permanência na Palavra:</b> Diante da apostasia, a estratégia não é inovação, é fidelidade. "Tu, porém, permanece naquilo que aprendeste".</p>
+                <p><b>Conclusão:</b> É melhor pregar para bancos vazios com a verdade, do que para templos lotados com a mentira.</p>
+            `,
+            esboco6: `
+                <h4>AHAVA: A Dívida Eterna do Amor</h4>
+                <p><b>Referência:</b> Romanos 13:8</p>
+                <p><b>Introdução:</b> O amor cristão é a única dívida que, quanto mais se paga, mais se deve. Vamos mergulhar na profundidade desta "dívida" através das línguas originais.</p>
+                <p><b>I. AHAVA (Hebraico): O Amor como Ação:</b> Diferente do sentimento ocidental, Ahava tem a raiz "Hav" (dar). No hebraico bíblico, amar é um ato de entrega prática, não uma emoção passiva.</p>
+                <p><b>II. ÁGAPE x PHILOS (Grego):</b> O Ágape é o amor de eleição e sacrifício; o Philos é a afeição fraternal. O Ministro é chamado a amar o rebanho com Ágape, mesmo quando o Philos falha devido às ingratidões do ministério.</p>
+                <p><b>III. A Dívida que nos Mantém Humildes:</b> Quem ama não se sente superior. A dívida do amor nos coloca como servos de todos.</p>
+                <p><b>Fechamento:</b> Se sua pregação tem retórica mas não tem Ahava, ela é apenas metal que soa.</p>
+            `,
+            esboco7: `
+                <h4>Eternidade: O Plano que o Mundo Ignora</h4>
+                <p><b>Referência:</b> Lucas 12:20</p>
+                <p><b>Introdução:</b> O mundo investe 100% do tempo em planos para os próximos 40 anos, mas ignora o plano para os próximos trilhões de anos. "Louco, esta noite te pedirão a tua alma".</p>
+                <p><b>I. A Ilusão do "Amanhã":</b> O rico insensato planejou celeiros, mas esqueceu que seu fôlego era emprestado. O foco do Ministro deve ser preparar a Igreja para o encontro com o Noivo.</p>
+                <p><b>II. Planos para o Futuro x Planos para a Eternidade:</b> Planos para o futuro visam conforto; planos para a eternidade visam coroa. O que você está acumulando no seu ministério?</p>
+                <p><b>III. A Pergunta Inevitável:</b> "Para quem será o que tens preparado?". Se hoje fosse o toque da trombeta, o seu legado seria ouro, prata e pedras preciosas, ou madeira, feno e palha?</p>
+                <p><b>Conclusão:</b> O tempo é o átrio da eternidade. Não gaste sua unção apenas com coisas que perecem com o uso.</p>
+            `
+        };
+
+        function abrirEsboco(id) {
+            document.getElementById('conteudo-dinamico').innerHTML = dadosEsbocos[id];
+            document.getElementById('modalEsboco').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fecharEsboco() {
+            document.getElementById('modalEsboco').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function filtrar() {
+            let termo = document.getElementById('campoBusca').value.toLowerCase();
+            let cards = document.querySelectorAll('.esboco-card');
+            cards.forEach(card => {
+                let texto = card.innerText.toLowerCase();
+                card.style.display = texto.includes(termo) ? "block" : "none";
+            });
+        }
+    </script>
+</body>
+</html>
