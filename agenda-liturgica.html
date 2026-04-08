@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Litúrgico - Ministro Classe A</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Playfair+Display:ital,wght@0,400;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root { --blue: #002147; --gold: #d4af37; --white: #f4f1ea; }
+        body { background: var(--blue); color: var(--white); font-family: 'Lato', sans-serif; margin: 0; padding: 20px; }
+        
+        .nav-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--gold); padding-bottom: 15px; margin-bottom: 25px; }
+        .btn-back { color: var(--gold); text-decoration: none; font-family: 'Cinzel'; font-size: 0.8rem; }
+        
+        h2 { font-family: 'Cinzel', serif; color: var(--gold); text-align: center; font-size: 1.1rem; margin: 0; }
+
+        .selector-label { font-family: 'Cinzel', serif; font-size: 0.65rem; color: var(--gold); display: block; margin: 20px 0 8px; text-align: center; letter-spacing: 1px; }
+        
+        select {
+            width: 100%; background: rgba(255,255,255,0.05); color: var(--white);
+            border: 1px solid var(--gold); padding: 12px; font-family: 'Playfair Display', serif;
+            font-size: 1rem; border-radius: 4px; margin-bottom: 20px; outline: none;
+        }
+
+        .protocolo-ativo {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 8px; padding: 25px; animation: fadeIn 0.5s ease-in;
+        }
+
+        .rito-title { font-family: 'Cinzel', serif; color: var(--gold); font-size: 1rem; margin-bottom: 15px; display: block; text-align: center; border-bottom: 1px solid rgba(212,175,55,0.2); padding-bottom: 10px;}
+        
+        .passo-texto { 
+            font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.25rem; 
+            color: var(--white); text-align: center; min-height: 120px; 
+            display: flex; align-items: center; justify-content: center; line-height: 1.4;
+        }
+
+        .controles { display: flex; gap: 10px; margin-top: 20px; }
+        .btn { flex: 1; border: 1px solid var(--gold); padding: 15px; font-family: 'Cinzel'; font-size: 0.7rem; cursor: pointer; border-radius: 4px; }
+        .btn-next { background: var(--gold); color: var(--blue); font-weight: bold; }
+        .btn-reset { background: transparent; color: var(--gold); }
+
+        /* Rodapé de Ética */
+        .rodape-etica {
+            margin-top: 30px; background: rgba(0,0,0,0.2); padding: 15px;
+            border: 1px dashed var(--gold); border-radius: 4px;
+        }
+        .rodape-etica h4 { font-family: 'Cinzel'; color: var(--gold); font-size: 0.7rem; margin-top: 0; }
+        .rodape-etica p { font-size: 0.75rem; line-height: 1.5; margin: 0; opacity: 0.9; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="nav-header">
+        <a href="index.html" class="btn-back">← Gabinete</a>
+        <span style="font-family: 'Cinzel'; font-size: 0.6rem; color: var(--gold);">Oficial Liturgia AD</span>
+    </div>
+
+    <h2>Agenda Litúrgica</h2>
+
+    <span class="selector-label">Selecione a Solenidade Ministerial</span>
+    <select id="cerimonia-select" onchange="iniciarCerimonia()">
+        <option value="">-- Escolha o Rito --</option>
+        <option value="ceia">Ceia do Senhor</option>
+        <option value="batismo">Batismo em Águas</option>
+        <option value="casamento">Celebração de Casamento</option>
+        <option value="noivado">Culto de Noivado</option>
+        <option value="funeral">Cerimônia Fúnebre</option>
+        <option value="criancas">Apresentação de Crianças</option>
+        <option value="assembleia">Assembleia Ordinária (AGO)</option>
+    </select>
+
+    <div id="display-protocolo" class="protocolo-ativo" style="display: none;">
+        <span id="titulo-rito" class="rito-title"></span>
+        <div id="passo-texto" class="passo-texto"></div>
+        
+        <div class="controles">
+            <button class="btn btn-reset" onclick="reiniciar()">Reiniciar</button>
+            <button class="btn btn-next" onclick="proximo()">Avançar</button>
+        </div>
+    </div>
+
+    <div class="rodape-etica">
+        <h4>Nota de Protocolo e Ética Inegociável:</h4>
+        <p>A abertura é feita após a Oração Inicial. É dever de praxe <strong>DEVOLVER A DIREÇÃO DA CERIMÔNIA</strong> ao Pastor Presidente ou ao superior na hierarquia presente (Vice, 1º Secretário, etc). A honra deve ser pública, reconhecendo a autoridade do campo autônomo.</p>
+    </div>
+
+    <script>
+        const protocolos = {
+            ceia: [
+                "1. Oração Inicial e Abertura Solene",
+                "2. Hinos da Harpa (Ex: 3, 39 ou 43 - Ceia)",
+                "3. Leitura Bíblica Oficial: 1 Coríntios 11:23-32",
+                "4. Devolução da Direção ao Superior Presente",
+                "5. Mensagem: O Exame Próprio e o Memorial",
+                "6. Oração pelo Pão e Distribuição (Oficiais)",
+                "7. Oração pelo Vinho e Distribuição (Oficiais)",
+                "8. Oração Final e Benção Apostólica"
+            ],
+            batismo: [
+                "1. Oração Inicial (Gratidão pelo Fruto)",
+                "2. Hinos da Harpa (Ex: 15, 21 ou 376 - Novo Nascimento)",
+                "3. Leitura Bíblica: Mateus 28:18-20 ou Atos 8",
+                "4. Devolução da Direção ao Superior Presente",
+                "5. Exortação e Confissão de Fé dos Candidatos",
+                "6. Batismo em Nome do Pai, do Filho e do Espírito Santo",
+                "7. Oração por Confirmação e Boas-Vindas"
+            ],
+            casamento: [
+                "1. Oração Inicial e Invocação",
+                "2. Hino ou Cântico de Louvor à Família",
+                "3. Leitura Bíblica: Gênesis 2:18-24 ou Efésios 5",
+                "4. Devolução da Direção ao Superior Presente",
+                "5. Mensagem e Tomada de Votos",
+                "6. Oração e Benção das Alianças",
+                "7. Assinaturas e Pronunciamento Oficial"
+                
+                ],
+                noivado: [
+           "1. Oração Inicial e Invocação da Presença Divina",
+           "2. Hinos de Exaltação a Deus (Ex: Harpa 141 ou 212)",
+           "3. Leitura Bíblica: Gênesis 24:58-67 (O Compromisso de Isaque e Rebeca)",
+           "4. Protocolo de Honra: DEVOLUÇÃO DA DIREÇÃO ao Pastor Presidente ou Superior presente",
+           "5. Mensagem: A Santidade do Compromisso e a Vontade do Senhor",
+           "6. Exortação aos Noivos sobre o Período de Preparação",
+           "7. Oração Sacerdotal pelas Alianças e pela Vida dos Noivos",
+           "8. Oração de Encerramento e Benção Apostólica"
+
+    
+            ],
+            funeral: [
+                "1. Oração Inicial e Consolo à Família",
+                "2. Hinos da Harpa (Ex: 187, 422 - Esperança)",
+                "3. Leitura Bíblica: João 11:25-26 ou 1 Tessalonicenses 4",
+                "4. Devolução da Direção ao Superior Presente",
+                "5. Breve Elogio Fúnebre e Palavra de Ressurreição",
+                "6. Oração de Encerramento e Despedida"
+            ],
+            criancas: [
+                "1. Oração Inicial",
+                "2. Hino da Harpa (Ex: 484 ou 545)",
+                "3. Leitura Bíblica: Mateus 19:13-15",
+                "4. Devolução da Direção ao Superior Presente",
+                "5. Oração Intercessória pela Criança e Pais",
+                "6. Entrega do Certificado e Benção"
+            ],
+            assembleia: [
+                "1. Oração Inicial por Sabedoria",
+                "2. Hino de Unidade (Ex: 225)",
+                "3. Verificação de Quórum e Leitura de Ata",
+                "4. Devolução da Direção ao Presidente da AGO",
+                "5. Pauta do Dia e Deliberações",
+                "6. Oração Final e Encerramento"
+            ]
+        };
+
+        let atualPasso = 0;
+        let ritoAtivo = [];
+
+        function iniciarCerimonia() {
+            const select = document.getElementById('cerimonia-select');
+            const valor = select.value;
+            if(valor) {
+                ritoAtivo = protocolos[valor];
+                atualPasso = 0;
+                document.getElementById('titulo-rito').innerText = select.options[select.selectedIndex].text;
+                document.getElementById('display-protocolo').style.display = 'block';
+                mostrarPasso();
+            }
+        }
+
+        function mostrarPasso() {
+            const texto = document.getElementById('passo-texto');
+            texto.innerText = ritoAtivo[atualPasso];
+        }
+
+        function proximo() {
+            if(atualPasso < ritoAtivo.length - 1) {
+                atualPasso++;
+                mostrarPasso();
+            } else {
+                document.getElementById('passo-texto').innerText = "Solenidade Finalizada com Decoro e Ordem.";
+            }
+        }
+
+        function reiniciar() {
+            atualPasso = 0;
+            mostrarPasso();
+        }
+    </script>
+</body>
+</html>
